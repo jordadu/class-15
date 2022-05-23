@@ -1,0 +1,49 @@
+---
+title: "Documento de prueba"
+author: "Eduard Martinez"
+date: "12/1/2021"
+output: 
+       #pdf_document
+        html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introducción
+
+Esta parte del docuemto contiene la introducción del documento
+
+
+## Pintar mapas
+
+```{r, eval=T , echo=F , message=F , warning=F}
+require(pacman)
+p_load(tidyverse,viridis,sf,maps) # llamar y/o instalar librerias
+
+# load data
+df = storms
+
+# df to sf
+sf_df = st_as_sf(x = df, coords = c("long" , "lat"), crs = "+proj=longlat +datum=WGS84")
+
+# cargar datos del mundo
+world = st_as_sf(map("world", plot = FALSE, fill = TRUE))
+
+# Pintar el recorrido de Katrina
+ggplot() + 
+geom_sf(data = world , fill = "grey80", col = "grey40", lwd = 0.3) +
+geom_sf(data = sf_df[sf_df$name=="Katrina",] , aes(size=hu_diameter) , color="red" , alpha=0.5) + 
+theme_bw()
+```
+
+Este mapa muestra que el huracan **Katrina** tuvo un diámetro máximo de `r max(df$hu_diameter, na.rm=T)` metros. Los datos fueron tomados de la página oficial de [NOAA](https://www.nhc.noaa.gov/data/#hurdat). Por ejemplo la distribución de huracanes a lo largo del tiempo se ve así:
+
+
+```{r, eval=T , echo=F , message=F , warning=F}
+hist(df$year)
+```
+
+
